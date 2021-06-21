@@ -25,10 +25,12 @@ func KvResource() *schema.Resource {
 			"key": &schema.Schema{
 				Type:     schema.TypeString,
 				Required: true,
+				ForceNew: true,
 			},
 			"value": &schema.Schema{
 				Type:     schema.TypeString,
 				Required: true,
+				ForceNew: true,
 			},
 		},
 	}
@@ -84,7 +86,7 @@ func KvResourceRead(ctx context.Context, d *schema.ResourceData, meta interface{
 		return diag.FromErr(err)
 
 	}
-	fmt.Println(response.Kvs)
+	fmt.Println(response)
 	return nil
 }
 
@@ -98,6 +100,6 @@ func KvResourceDelete(ctx context.Context, d *schema.ResourceData, meta interfac
 		return diag.FromErr(err)
 
 	}
-	//fmt.Println(response.Kvs)
+	d.SetId("")
 	return nil
 }

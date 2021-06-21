@@ -36,17 +36,24 @@ func New() *schema.Provider {
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"username": &schema.Schema{
-				Type:     schema.TypeString,
-				Required: true,
+				Type:        schema.TypeString,
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc("username", "rootuser"),
 			},
 			"password": &schema.Schema{
-				Type:     schema.TypeString,
-				Required: true,
+				Type:        schema.TypeString,
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc("password", "rootuser"),
+			},
+			"is_auth_enabled": &schema.Schema{
+				Type:        schema.TypeBool,
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc("isAuthEnabled", true),
 			},
 		},
-		//DataSourcesMap: map[string]*schema.Resource{
-		//	"data_source": dataSource(),
-		//},
+		DataSourcesMap: map[string]*schema.Resource{
+			"cluster_member_list_data_source": ClusterDataSource(),
+		},
 		ResourcesMap: map[string]*schema.Resource{
 			"kv_resource": KvResource(),
 		},
@@ -69,20 +76,33 @@ func configure(ctx context.Context, d *schema.ResourceData) (interface{}, diag.D
 	// Setup a User-Agent for your API client (replace the provider name for yours):
 	// userAgent := p.UserAgent("terraform-provider-scaffolding", version)
 	// TODO: myClient.UserAgent = userAgent
-	var diags diag.Diagnostics
+	var (
+		diags diag.Diagnostics
+		err   error
+		cli   *etcd.Client
+	)
 
 	endpoints := d.Get("endpoints").([]string)
 
 	username := d.Get("username").(string)
 	password := d.Get("password").(string)
+	isAuthEnabled := d.Get("is_auth_enabled").(bool)
 
-	cli, err := etcd.New(etcd.Config{
-		Endpoints:   endpoints,
-		DialTimeout: 5 * time.Second,
-		Username:    username,
-		Password:    password,
-	})
-	cli.AuthEnable(ctx)
+	if !isAuthEnabled {
+		cli, err = etcd.New(etcd.Config{
+			Endpoints:   endpoints,
+			DialTimeout: 5 * time.Second,
+		})
+
+	} else {
+		cli, err = etcd.New(etcd.Config{
+			Endpoints:   endpoints,
+			DialTimeout: 5 * time.Second,
+			Username:    username,
+			Password:    password,
+		})
+		cli.AuthEnable(ctx)
+	}
 
 	if err != nil {
 		diags = append(diags, diag.Diagnostic{
