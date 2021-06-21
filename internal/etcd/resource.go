@@ -2,59 +2,102 @@ package provider
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"go.etcd.io/etcd/api/v3/v3rpc/rpctypes"
 )
+
+var ctx = context.Background()
 
 func resource() *schema.Resource {
 	return &schema.Resource{
 		// This description is used by the documentation generator and the language server.
-		Description: "Sample resource in the Terraform provider scaffolding.",
+		Description: "",
 
 		CreateContext: resourceCreate,
 		ReadContext:   resourceRead,
-		UpdateContext: resourceUpdate,
+		//UpdateContext: resourceUpdate,
 		DeleteContext: resourceDelete,
 
 		Schema: map[string]*schema.Schema{
-			"sample_attribute": {
-				// This description is used by the documentation generator and the language server.
-				Description: "Sample attribute.",
-				Type:        schema.TypeString,
-				Optional:    true,
+			"key": &schema.Schema{
+				Type:     schema.TypeString,
+				Required: true,
+			},
+			"value": &schema.Schema{
+				Type:     schema.TypeString,
+				Required: true,
 			},
 		},
 	}
 }
 
 func resourceCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	// use the meta value to retrieve your client from the provider configure method
-	// client := meta.(*apiClient)
+	var diags diag.Diagnostics
 
-	idFromAPI := "my-id"
-	d.SetId(idFromAPI)
+	client, ok := meta.(*apiClient)
 
-	return diag.Errorf("not implemented")
+	if !ok {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "",
+			Detail:   "",
+		})
+	}
+
+	key := d.Get("key").(string)
+	value := d.Get("value").(string)
+
+	_, err := client.Put(ctx, key, value)
+
+	if err != nil {
+		switch err {
+		case context.Canceled:
+			errmsg := fmt.Errorf("ctx is canceled by another routine: %v", err)
+			return diag.FromErr(errmsg)
+		case context.DeadlineExceeded:
+			errmsg := fmt.Errorf("ctx is attached with a deadline is exceeded: %v", err)
+			return diag.FromErr(errmsg)
+		case rpctypes.ErrEmptyKey:
+			errmsg := fmt.Errorf("client-side error: %v", err)
+			return diag.FromErr(errmsg)
+		default:
+			errmsg := fmt.Errorf("bad cluster endpoints, which are not etcd servers: %v", err)
+			return diag.FromErr(errmsg)
+		}
+
+	}
+	d.SetId(key)
+
+	return diags
 }
 
 func resourceRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	// use the meta value to retrieve your client from the provider configure method
-	// client := meta.(*apiClient)
+	client := meta.(*apiClient)
 
-	return diag.Errorf("not implemented")
-}
+	key := d.Get("key").(string)
 
-func resourceUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	// use the meta value to retrieve your client from the provider configure method
-	// client := meta.(*apiClient)
+	response, err := client.Get(ctx, key)
+	if err != nil {
+		return diag.FromErr(err)
 
-	return diag.Errorf("not implemented")
+	}
+	fmt.Println(response.Kvs)
+	return nil
 }
 
 func resourceDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	// use the meta value to retrieve your client from the provider configure method
-	// client := meta.(*apiClient)
+	client := meta.(*apiClient)
 
-	return diag.Errorf("not implemented")
+	key := d.Get("key").(string)
+
+	_, err := client.Delete(ctx, key)
+	if err != nil {
+		return diag.FromErr(err)
+
+	}
+	//fmt.Println(response.Kvs)
+	return nil
 }

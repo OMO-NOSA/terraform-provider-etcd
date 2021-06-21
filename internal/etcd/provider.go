@@ -33,6 +33,7 @@ func New() *schema.Provider {
 				Type:        schema.TypeList,
 				Optional:    false,
 				DefaultFunc: schema.EnvDefaultFunc("ENDPOINTS", []string{"localhost:2379"}),
+				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 		},
 		//DataSourcesMap: map[string]*schema.Resource{
@@ -77,6 +78,7 @@ func configure(ctx context.Context, d *schema.ResourceData) (interface{}, diag.D
 		Endpoints:   endpoints,
 		DialTimeout: 5 * time.Second,
 	})
+
 	if err != nil {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,
