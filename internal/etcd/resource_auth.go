@@ -44,7 +44,15 @@ func AuthResourceCreateUser(ctx context.Context, d *schema.ResourceData, meta in
 
 	_, err := client.UserAdd(ctx, userName, passWord)
 	if err != nil {
-		diag.FromErr(err)
+		return diag.FromErr(err)
+	}
+	if err := d.Set("username", userName); err != nil {
+		return diag.FromErr(err)
+
+	}
+
+	if err := d.Set("password", passWord); err != nil {
+		return diag.FromErr(err)
 	}
 	d.SetId(userName)
 	return nil
@@ -53,11 +61,11 @@ func AuthResourceCreateUser(ctx context.Context, d *schema.ResourceData, meta in
 func AuthResourceDeleteUser(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*apiClient)
 
-	userName := d.Get("username").(string)
+	userName := d.Id()
 
 	_, err := client.UserDelete(ctx, userName)
 	if err != nil {
-		diag.FromErr(err)
+		return diag.FromErr(err)
 	}
 	d.SetId("")
 	return nil
@@ -68,7 +76,7 @@ func AuthResourceUpdateUser(ctx context.Context, d *schema.ResourceData, meta in
 
 	userName := d.Get("username").(string)
 	passWord := d.Get("password").(string)
-
+	
 	if passWord == "" {
 		errmsg := errors.New("password cannot be empty")
 		return diag.FromErr(errmsg)
@@ -76,9 +84,9 @@ func AuthResourceUpdateUser(ctx context.Context, d *schema.ResourceData, meta in
 
 	_, err := client.UserChangePassword(ctx, userName, passWord)
 	if err != nil {
-		diag.FromErr(err)
+		return diag.FromErr(err)
 	}
-	d.SetId("")
+	d.SetId(userName)
 	return nil
 }
 
@@ -87,9 +95,12 @@ func AuthResourceGetUser(ctx context.Context, d *schema.ResourceData, meta inter
 
 	userName := d.Get("username").(string)
 
-	_, err := client.UserGet(ctx, userName)
+	resp, err := client.UserGet(ctx, userName)
 	if err != nil {
-		diag.FromErr(err)
+		return diag.FromErr(err)
+	}
+	if err := d.Set("roles", resp.Roles); err != nil {
+		return diag.FromErr(err)
 	}
 
 	return nil

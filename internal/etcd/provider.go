@@ -58,6 +58,7 @@ func New() *schema.Provider {
 			"key_value_resource": KvResource(),
 			"role_resource":      RoleResource(),
 			"user_resource":      AuthResource(),
+			"grant_user_role_resource": RoleGrantResource(),
 		},
 	}
 
@@ -72,9 +73,6 @@ type apiClient struct {
 }
 
 func configure(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
-	// Setup a User-Agent for your API client (replace the provider name for yours):
-	// userAgent := p.UserAgent("terraform-provider-scaffolding", version)
-	// TODO: myClient.UserAgent = userAgent
 	var (
 		diags diag.Diagnostics
 		err   error

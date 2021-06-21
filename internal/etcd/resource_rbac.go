@@ -26,11 +26,53 @@ func RoleResource() *schema.Resource {
 	}
 }
 
+func RoleGrantResource() *schema.Resource {
+	return &schema.Resource{
+		Description:   "",
+		CreateContext: GrantUserRole,
+		Schema: map[string]*schema.Schema{
+			"username": &schema.Schema{
+				Type:     schema.TypeString,
+				Required: true,
+			},
+			"role_name": &schema.Schema{
+				Type:     schema.TypeString,
+				Required: true,
+			},
+		},
+	}
+}
+
+func GrantUserRole(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	client := meta.(*apiClient)
+
+	roleName := d.Get("role_name").(string)
+	userName := d.Get("username").(string)
+	_, err := client.UserGrantRole(ctx, userName, roleName)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	d.SetId(roleName)
+	return nil
+
+}
+
+func RevokeUserRole(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	client := meta.(*apiClient)
+
+	roleName := d.Get("role_name").(string)
+	userName := d.Get("username").(string)
+	_, err := client.UserRevokeRole(ctx, userName, roleName)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	d.SetId("")
+	return nil
+}
+
 func RolePermissionResource() *schema.Resource {
 	return &schema.Resource{
 		Description: "",
-		CreateContext: ,
-		
 	}
 }
 
@@ -52,8 +94,11 @@ func RoleResourceRead(ctx context.Context, d *schema.ResourceData, meta interfac
 
 	roleName := d.Get("name").(string)
 
-	_, err := client.RoleGet(ctx, roleName)
+	resp, err := client.RoleGet(ctx, roleName)
 	if err != nil {
+		diag.FromErr(err)
+	}
+	if err := d.Set("permissions", resp.Perm); err != nil {
 		diag.FromErr(err)
 	}
 	return nil
