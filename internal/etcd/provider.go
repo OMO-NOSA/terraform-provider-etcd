@@ -1,4 +1,4 @@
-package provider
+package etcd
 
 import (
 	"context"
@@ -31,17 +31,25 @@ func New() *schema.Provider {
 		Schema: map[string]*schema.Schema{
 			"endpoints": &schema.Schema{
 				Type:        schema.TypeList,
-				Optional:    false,
+				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("ENDPOINTS", []string{"localhost:2379"}),
 				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
+			"username": &schema.Schema{
+				Type:     schema.TypeString,
+				Required: true,
+			},
+			"password": &schema.Schema{
+				Type:     schema.TypeString,
+				Required: true,
 			},
 		},
 		//DataSourcesMap: map[string]*schema.Resource{
 		//	"data_source": dataSource(),
 		//},
-		//ResourcesMap: map[string]*schema.Resource{
-		//	"resource": resource(),
-		//},
+		ResourcesMap: map[string]*schema.Resource{
+			"kv_resource": KvResource(),
+		},
 	}
 
 	p.ConfigureContextFunc = configure
@@ -63,21 +71,18 @@ func configure(ctx context.Context, d *schema.ResourceData) (interface{}, diag.D
 	// TODO: myClient.UserAgent = userAgent
 	var diags diag.Diagnostics
 
-	endpoints, ok := d.Get("endpoints").([]string)
-	if !ok {
-		diags = append(diags, diag.Diagnostic{
-			Severity: diag.Error,
-			Summary:  "",
-			Detail:   "",
-		})
-		return nil, diags
+	endpoints := d.Get("endpoints").([]string)
 
-	}
+	username := d.Get("username").(string)
+	password := d.Get("password").(string)
 
 	cli, err := etcd.New(etcd.Config{
 		Endpoints:   endpoints,
 		DialTimeout: 5 * time.Second,
+		Username:    username,
+		Password:    password,
 	})
+	cli.AuthEnable(ctx)
 
 	if err != nil {
 		diags = append(diags, diag.Diagnostic{

@@ -1,4 +1,4 @@
-package provider
+package etcd
 
 import (
 	"context"
@@ -11,15 +11,15 @@ import (
 
 var ctx = context.Background()
 
-func resource() *schema.Resource {
+func KvResource() *schema.Resource {
 	return &schema.Resource{
 		// This description is used by the documentation generator and the language server.
 		Description: "",
 
-		CreateContext: resourceCreate,
-		ReadContext:   resourceRead,
+		CreateContext: KvResourceCreate,
+		ReadContext:   KvResourceRead,
 		//UpdateContext: resourceUpdate,
-		DeleteContext: resourceDelete,
+		DeleteContext: KvResourceDelete,
 
 		Schema: map[string]*schema.Schema{
 			"key": &schema.Schema{
@@ -34,7 +34,7 @@ func resource() *schema.Resource {
 	}
 }
 
-func resourceCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func KvResourceCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
 
 	client, ok := meta.(*apiClient)
@@ -74,7 +74,7 @@ func resourceCreate(ctx context.Context, d *schema.ResourceData, meta interface{
 	return diags
 }
 
-func resourceRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func KvResourceRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*apiClient)
 
 	key := d.Get("key").(string)
@@ -88,7 +88,7 @@ func resourceRead(ctx context.Context, d *schema.ResourceData, meta interface{})
 	return nil
 }
 
-func resourceDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func KvResourceDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*apiClient)
 
 	key := d.Get("key").(string)
