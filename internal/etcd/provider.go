@@ -38,12 +38,12 @@ func New() *schema.Provider {
 			"username": &schema.Schema{
 				Type:        schema.TypeString,
 				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("username", "rootuser"),
+				DefaultFunc: schema.EnvDefaultFunc("username", "root"),
 			},
 			"password": &schema.Schema{
 				Type:        schema.TypeString,
 				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("password", "rootuser"),
+				DefaultFunc: schema.EnvDefaultFunc("password", "pwd"),
 			},
 			"is_auth_enabled": &schema.Schema{
 				Type:        schema.TypeBool,
