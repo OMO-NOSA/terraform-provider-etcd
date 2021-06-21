@@ -52,10 +52,12 @@ func New() *schema.Provider {
 			},
 		},
 		DataSourcesMap: map[string]*schema.Resource{
-			"cluster_member_list_data_source": ClusterDataSource(),
+			"cluster_data_source": ClusterDataSource(),
 		},
 		ResourcesMap: map[string]*schema.Resource{
-			"kv_resource": KvResource(),
+			"key_value_resource": KvResource(),
+			"role_resource":      RoleResource(),
+			"user_resource":      AuthResource(),
 		},
 	}
 
@@ -66,9 +68,6 @@ func New() *schema.Provider {
 }
 
 type apiClient struct {
-	// Add whatever fields, client or connection info, etc. here
-	// you would need to setup to communicate with the upstream
-	// API.
 	*etcd.Client
 }
 

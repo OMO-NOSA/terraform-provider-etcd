@@ -7,9 +7,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"go.etcd.io/etcd/api/v3/v3rpc/rpctypes"
+	clientv3 "go.etcd.io/etcd/client/v3"
+	"go.etcd.io/etcd/client/v3/clientv3util"
 )
-
-var ctx = context.Background()
 
 func KvResource() *schema.Resource {
 	return &schema.Resource{
@@ -39,20 +39,14 @@ func KvResource() *schema.Resource {
 func KvResourceCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
 
-	client, ok := meta.(*apiClient)
-
-	if !ok {
-		diags = append(diags, diag.Diagnostic{
-			Severity: diag.Error,
-			Summary:  "",
-			Detail:   "",
-		})
-	}
+	client := meta.(*apiClient).Client
 
 	key := d.Get("key").(string)
 	value := d.Get("value").(string)
 
-	_, err := client.Put(ctx, key, value)
+	kvc := clientv3.NewKV(client)
+
+	_, err := kvc.Txn(ctx).If(clientv3util.KeyMissing(key)).Then(clientv3.OpPut(key, value)).Commit()
 
 	if err != nil {
 		switch err {
@@ -91,11 +85,17 @@ func KvResourceRead(ctx context.Context, d *schema.ResourceData, meta interface{
 }
 
 func KvResourceDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	client := meta.(*apiClient)
+	client := meta.(*apiClient).Client
 
 	key := d.Get("key").(string)
 
-	_, err := client.Delete(ctx, key)
+	kvc := clientv3.NewKV(client)
+
+	_, err := kvc.Txn(ctx).
+		If(clientv3util.KeyExists(key)).
+		Then(clientv3.OpDelete(key)).
+		Commit()
+
 	if err != nil {
 		return diag.FromErr(err)
 
