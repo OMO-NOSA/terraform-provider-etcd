@@ -13,7 +13,6 @@ import (
 
 func KvResource() *schema.Resource {
 	return &schema.Resource{
-		// This description is used by the documentation generator and the language server.
 		Description: "",
 
 		CreateContext: KvResourceCreate,
@@ -22,6 +21,10 @@ func KvResource() *schema.Resource {
 		DeleteContext: KvResourceDelete,
 
 		Schema: map[string]*schema.Schema{
+			"id": &schema.Schema{
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 			"key": &schema.Schema{
 				Type:     schema.TypeString,
 				Required: true,
