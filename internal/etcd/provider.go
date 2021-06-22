@@ -53,12 +53,14 @@ func New() *schema.Provider {
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			"cluster_data_source": ClusterDataSource(),
+			"users_data_source":   UsersDataSource(),
 		},
 		ResourcesMap: map[string]*schema.Resource{
-			"key_value_resource": KvResource(),
-			"role_resource":      RoleResource(),
-			"user_resource":      AuthResource(),
-			//	"grant_user_role_resource": RoleGrantResource(),
+			"key_value_resource":       KvResource(),
+			"role_resource":            RoleResource(),
+			"user_resource":            AuthResource(),
+			"grant_user_role_resource": RoleGrantResource(),
+			"grant_role_permission":    RolePermissionResource(),
 		},
 	}
 

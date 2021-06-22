@@ -3,6 +3,8 @@ package etcd
 import (
 	"context"
 	"errors"
+	"strconv"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -19,6 +21,10 @@ func AuthResource() *schema.Resource {
 		DeleteContext: AuthResourceDeleteUser,
 
 		Schema: map[string]*schema.Schema{
+			"id": &schema.Schema{
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 			"username": &schema.Schema{
 				Type:     schema.TypeString,
 				Required: true,
@@ -26,6 +32,16 @@ func AuthResource() *schema.Resource {
 			"password": &schema.Schema{
 				Type:     schema.TypeString,
 				Optional: true,
+			},
+			"roles": &schema.Schema{
+				Type:     schema.TypeList,
+				Computed: true,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+			},
+
+			"last_updated": &schema.Schema{
+				Type:     schema.TypeString,
+				Computed: true,
 			},
 		},
 	}
@@ -46,22 +62,16 @@ func AuthResourceCreateUser(ctx context.Context, d *schema.ResourceData, meta in
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	if err := d.Set("username", userName); err != nil {
-		return diag.FromErr(err)
+	d.Set("username", userName)
 
-	}
-
-	if err := d.Set("password", passWord); err != nil {
-		return diag.FromErr(err)
-	}
-	d.SetId(userName)
+	d.SetId(strconv.FormatInt(time.Now().Unix(), 10))
 	return nil
 }
 
 func AuthResourceDeleteUser(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*apiClient)
 
-	userName := d.Id()
+	userName := d.Get("username").(string)
 
 	_, err := client.UserDelete(ctx, userName)
 	if err != nil {
@@ -76,7 +86,7 @@ func AuthResourceUpdateUser(ctx context.Context, d *schema.ResourceData, meta in
 
 	userName := d.Get("username").(string)
 	passWord := d.Get("password").(string)
-	
+
 	if passWord == "" {
 		errmsg := errors.New("password cannot be empty")
 		return diag.FromErr(errmsg)
@@ -86,7 +96,7 @@ func AuthResourceUpdateUser(ctx context.Context, d *schema.ResourceData, meta in
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	d.SetId(userName)
+	d.Set("last_updated", time.Now().Format(time.RFC850))
 	return nil
 }
 

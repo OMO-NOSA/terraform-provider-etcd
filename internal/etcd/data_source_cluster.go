@@ -2,7 +2,6 @@ package etcd
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -50,7 +49,10 @@ func clusterDataSourceRead(ctx context.Context, d *schema.ResourceData, meta int
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	fmt.Println(clusters)
+	if err := d.Set("members", clusters.Members); err != nil {
+		return diag.FromErr(err)
+
+	}
 
 	return nil
 }

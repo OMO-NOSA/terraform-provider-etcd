@@ -3,6 +3,8 @@ package etcd
 import (
 	"context"
 	"fmt"
+	"strconv"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -68,7 +70,7 @@ func KvResourceCreate(ctx context.Context, d *schema.ResourceData, meta interfac
 		}
 
 	}
-	d.SetId(key)
+	d.SetId(strconv.FormatInt(time.Now().Unix(), 10))
 
 	return diags
 }
