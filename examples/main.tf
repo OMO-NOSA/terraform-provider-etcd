@@ -21,7 +21,7 @@ resource "key_value_resource" "edu" {
 }
 
 resource "user_resource" "user"{
-  username = "Alan123"
+  username = "Alan1234"
   password = "1456"
   provider = etcd
 }
@@ -32,14 +32,14 @@ resource "role_resource" "role" {
 
 }
 
-resource "grant_role_permission" "perm" {
-  name = "Security Engineer"
-  key = "checking"
-  permission = "READ"
-  range = "test"
-  provider = etcd
+# resource "grant_role_permission" "perm" {
+#   role_name = "Security Engineer"
+#   key = "checking"
+#   permission = "READ"
+#   range = "test"
+#   provider = etcd
 
-}
+# }
 
 data "users_data_source" "edu" {
     provider = etcd
@@ -60,3 +60,7 @@ output "user_data" {
 output "role" {
   value = role_resource.role
 }
+
+# output "role_perms" {
+#   value = grant_role_permission.perm
+# }

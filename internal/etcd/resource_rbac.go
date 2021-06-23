@@ -150,18 +150,22 @@ func RolePermissionResource() *schema.Resource {
 			"role_name": &schema.Schema{
 				Required: true,
 				Type:     schema.TypeString,
+				ForceNew: true,
 			},
 			"key": &schema.Schema{
 				Required: true,
 				Type:     schema.TypeString,
+				ForceNew: true,
 			},
 			"range": &schema.Schema{
 				Required: true,
 				Type:     schema.TypeString,
+				ForceNew: true,
 			},
 			"permission": &schema.Schema{
 				Required: true,
 				Type:     schema.TypeString,
+				ForceNew: true,
 			},
 		},
 	}
@@ -186,6 +190,10 @@ func GrantRolePermission(ctx context.Context, d *schema.ResourceData, meta inter
 	if err != nil {
 		diag.FromErr(err)
 	}
+	d.Set("role_name", roleName)
+	d.Set("key", key)
+	d.Set("range", rangePrefix)
+	d.Set("permission", perm)
 	return nil
 }
 
