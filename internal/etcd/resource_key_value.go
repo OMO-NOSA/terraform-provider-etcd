@@ -78,9 +78,9 @@ func KvResourceCreate(ctx context.Context, d *schema.ResourceData, meta interfac
 func KvResourceRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*apiClient)
 
-	id := d.Id()
+	key := d.Get("key").(string)
 
-	response, err := client.Get(ctx, id)
+	response, err := client.Get(ctx, key)
 	if err != nil {
 		return diag.FromErr(err)
 
@@ -92,13 +92,13 @@ func KvResourceRead(ctx context.Context, d *schema.ResourceData, meta interface{
 func KvResourceDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*apiClient).Client
 
-	id := d.Id()
+	key := d.Get("key").(string)
 
 	kvc := clientv3.NewKV(client)
 
 	_, err := kvc.Txn(ctx).
-		If(clientv3util.KeyExists(id)).
-		Then(clientv3.OpDelete(id)).
+		If(clientv3util.KeyExists(key)).
+		Then(clientv3.OpDelete(key)).
 		Commit()
 
 	if err != nil {

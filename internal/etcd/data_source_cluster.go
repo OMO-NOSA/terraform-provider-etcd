@@ -2,6 +2,8 @@ package etcd
 
 import (
 	"context"
+	"time"
+	"strconv"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -49,10 +51,23 @@ func clusterDataSourceRead(ctx context.Context, d *schema.ResourceData, meta int
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	if err := d.Set("members", clusters.Members); err != nil {
+	memberList := []interface{}{}
+	members := map[string]interface{}{}
+
+	for _, member := range clusters.Members {
+		members["id"] = member.ID
+		members["name"] = member.Name
+		members["peer_urls"] = member.PeerURLs
+		members["client_urls"] = member.ClientURLs
+
+		memberList = append(memberList, members)
+	}
+
+	if err := d.Set("members", memberList); err != nil {
 		return diag.FromErr(err)
 
 	}
-
+	d.SetId(strconv.FormatInt(time.Now().Unix(), 10))
+	
 	return nil
 }

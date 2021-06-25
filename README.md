@@ -29,7 +29,7 @@ Please see the Go documentation for the most up to date information about using 
 To add a new dependency `github.com/author/dependency` to your Terraform provider:
 
 ```
-go get github.com/author/dependency
+go get github.com/passbase/terraform-provider-etcd
 go mod tidy
 ```
 

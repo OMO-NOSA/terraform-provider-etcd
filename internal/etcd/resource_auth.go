@@ -97,6 +97,7 @@ func AuthResourceUpdateUser(ctx context.Context, d *schema.ResourceData, meta in
 		return diag.FromErr(err)
 	}
 	d.Set("last_updated", time.Now().Format(time.RFC850))
+	d.SetId(strconv.FormatInt(time.Now().Unix(), 10))
 	return nil
 }
 
@@ -106,10 +107,16 @@ func AuthResourceGetUser(ctx context.Context, d *schema.ResourceData, meta inter
 	userName := d.Get("username").(string)
 
 	resp, err := client.UserGet(ctx, userName)
+	
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	if err := d.Set("roles", resp.Roles); err != nil {
+	roles := []string{}
+
+	for _, role := range resp.Roles {
+		roles = append(roles, role)
+	}
+	if err := d.Set("roles", roles); err != nil {
 		return diag.FromErr(err)
 	}
 

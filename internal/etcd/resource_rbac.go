@@ -50,13 +50,13 @@ func RoleResourceRead(ctx context.Context, d *schema.ResourceData, meta interfac
 
 	roleName := d.Get("name").(string)
 
-	resp, err := client.RoleGet(ctx, roleName)
+	_, err := client.RoleGet(ctx, roleName)
 	if err != nil {
 		diag.FromErr(err)
 	}
-	if err := d.Set("permissions", resp.Perm); err != nil {
-		diag.FromErr(err)
-	}
+	//if err := d.Set("permissions", resp.Perm); err != nil {
+	//	diag.FromErr(err)
+	//}
 	return nil
 }
 
@@ -85,16 +85,18 @@ func RoleGrantResource() *schema.Resource {
 				Required: true,
 				ForceNew: true,
 			},
+			"id": &schema.Schema{
+				Type:     schema.TypeString,
+				Computed: true,
+				ForceNew: true,
+			},
+
 			"role_name": &schema.Schema{
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
 			},
-			"users": &schema.Schema{
-				Type:     schema.TypeList,
-				Computed: true,
-				Elem:     &schema.Schema{Type: schema.TypeString},
-			},
+			
 		},
 	}
 }
@@ -145,8 +147,9 @@ func RolePermissionResource() *schema.Resource {
 		CreateContext: GrantRolePermission,
 		DeleteContext: RevokeRolePermission,
 		ReadContext:   NotImplemented,
-		Description:   "",
+		Description: "",
 		Schema: map[string]*schema.Schema{
+
 			"role_name": &schema.Schema{
 				Required: true,
 				Type:     schema.TypeString,
@@ -190,6 +193,7 @@ func GrantRolePermission(ctx context.Context, d *schema.ResourceData, meta inter
 	if err != nil {
 		diag.FromErr(err)
 	}
+	d.SetId(time.Now().Format(time.RFC850))
 	d.Set("role_name", roleName)
 	d.Set("key", key)
 	d.Set("range", rangePrefix)
@@ -209,6 +213,7 @@ func RevokeRolePermission(ctx context.Context, d *schema.ResourceData, meta inte
 	if err != nil {
 		diag.FromErr(err)
 	}
+	d.SetId("")
 	return nil
 
 }
