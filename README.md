@@ -20,6 +20,19 @@ This repository contains Etcd [Terraform](https://www.terraform.io) provider for
 ```sh
 $ go install
 ```
+### Using Go Build For Linux
+```sh
+$ go build -o terraform-provider-etcd
+```
+```sh
+$ export OS_ARCH="$(go env GOHOSTOS)_$(go env GOHOSTARCH)"
+```
+```sh
+$ mkdir -p ~/.terraform.d/plugins/hashicorp.com/passbase/etcd/0.1/$OS_ARCH
+```
+```sh
+$ mv terraform-provider-etcd ~/.terraform.d/plugins/hashicorp.com/passbase/etcd/0.1/$OS_ARCH
+```
 
 ## Adding Dependencies
 

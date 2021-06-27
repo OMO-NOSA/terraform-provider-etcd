@@ -96,7 +96,6 @@ func RoleGrantResource() *schema.Resource {
 				Required: true,
 				ForceNew: true,
 			},
-			
 		},
 	}
 }
@@ -147,7 +146,7 @@ func RolePermissionResource() *schema.Resource {
 		CreateContext: GrantRolePermission,
 		DeleteContext: RevokeRolePermission,
 		ReadContext:   NotImplemented,
-		Description: "",
+		Description:   "",
 		Schema: map[string]*schema.Schema{
 
 			"role_name": &schema.Schema{
@@ -193,7 +192,7 @@ func GrantRolePermission(ctx context.Context, d *schema.ResourceData, meta inter
 	if err != nil {
 		diag.FromErr(err)
 	}
-	d.SetId(time.Now().Format(time.RFC850))
+	d.SetId(strconv.FormatInt(time.Now().Unix(), 10))
 	d.Set("role_name", roleName)
 	d.Set("key", key)
 	d.Set("range", rangePrefix)

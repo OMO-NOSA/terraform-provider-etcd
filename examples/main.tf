@@ -18,11 +18,11 @@ resource "key_value_resource" "edu" {
     
 }
 
-resource "user_resource" "user"{
-  username = "Mario"
-  password = "Lugi"
-  provider = etcd
-}
+# resource "user_resource" "user"{
+#   username = "Lugi"
+#   password = "Mario"
+#   provider = etcd
+# }
 
 resource "role_resource" "role" {
   name = "Security Engineer"
@@ -36,14 +36,14 @@ resource "grant_user_role_resource" "gmt" {
   provider = etcd
 }
 
-# resource "grant_role_permission" "perm" {
-#   role_name = "Security Engineer"
-#   key = "checking"
-#   permission = "READ"
-#   range = "test"
-#   provider = etcd
+resource "grant_role_permission" "perm" {
+  role_name = "Security Engineer"
+  key = "checking"
+  permission = "READ"
+  range = "test"
+  provider = etcd
 
-# }
+}
 
 data "users_data_source" "edu" {
   provider = etcd
@@ -52,15 +52,15 @@ data "users_data_source" "edu" {
 data "key_value_data_source" "edu" {
    provider = etcd
    key = "Nosa" 
- }
+}
  
 data "cluster_data_source" "edu" {
    provider = etcd
 }
 
-output "user" {
-  value = user_resource.user
-}
+# output "user" {
+#   value = user_resource.user
+# }
 
 output "key" {
   value = key_value_resource.edu
@@ -70,17 +70,17 @@ output "user_data" {
   value = data.users_data_source.edu
 }
 
-# output "role" {
-#   value = role_resource.role
-# }
+output "role" {
+  value = role_resource.role
+}
 
 output "val" {
   value = data.key_value_data_source.edu
 }
 
-# output "role_perms" {
-#   value = grant_role_permission.perm
-# }
+output "role_perms" {
+  value = grant_role_permission.perm
+}
 
 output "cluster_data" {
   value = data.cluster_data_source.edu
