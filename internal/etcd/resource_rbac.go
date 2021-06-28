@@ -77,7 +77,7 @@ func RoleGrantResource() *schema.Resource {
 	return &schema.Resource{
 		Description:   "",
 		CreateContext: GrantUserRole,
-		ReadContext:   Users,
+		ReadContext:   NotImplemented,
 		DeleteContext: RevokeUserRole,
 		Schema: map[string]*schema.Schema{
 			"username": &schema.Schema{
@@ -121,7 +121,11 @@ func Users(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.D
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	if err := d.Set("users", users.Users); err != nil {
+	userList := []string{}
+
+	userList = append(userList, users.Users...)
+
+	if err := d.Set("users", userList); err != nil {
 		return diag.FromErr(err)
 	}
 	return nil

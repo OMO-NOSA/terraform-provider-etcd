@@ -19,8 +19,8 @@ resource "key_value_resource" "edu" {
 }
 
 # resource "user_resource" "user"{
-#   username = "Lugi"
-#   password = "Mario"
+#   username = "Nosa5"
+#   password = "123456"
 #   provider = etcd
 # }
 
@@ -30,12 +30,6 @@ resource "role_resource" "role" {
 
 }
 
-resource "grant_user_role_resource" "gmt" {
-  role_name = "Security Engineer"
-  username = "Mario"
-  provider = etcd
-}
-
 resource "grant_role_permission" "perm" {
   role_name = "Security Engineer"
   key = "checking"
@@ -43,6 +37,12 @@ resource "grant_role_permission" "perm" {
   range = "test"
   provider = etcd
 
+}
+
+resource "grant_user_role_resource" "gmt" {
+  role_name = "Security Engineer"
+  username = "Mario"
+  provider = etcd
 }
 
 data "users_data_source" "edu" {
