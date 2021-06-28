@@ -53,8 +53,8 @@ func AuthResourceCreateUser(ctx context.Context, d *schema.ResourceData, meta in
 	userName := d.Get("username").(string)
 	passWord := d.Get("password").(string)
 
-	if passWord == "" {
-		errmsg := errors.New("password cannot be empty")
+	if (passWord == "" || len(passWord) < 9) {
+		errmsg := errors.New("Validate Password Strength")
 		return diag.FromErr(errmsg)
 	}
 
@@ -87,8 +87,8 @@ func AuthResourceUpdateUser(ctx context.Context, d *schema.ResourceData, meta in
 	userName := d.Get("username").(string)
 	passWord := d.Get("password").(string)
 
-	if passWord == "" {
-		errmsg := errors.New("password cannot be empty")
+	if (passWord == "" || len(passWord) < 9) {
+		errmsg := errors.New("Validate Password Strength")
 		return diag.FromErr(errmsg)
 	}
 
@@ -107,7 +107,7 @@ func AuthResourceGetUser(ctx context.Context, d *schema.ResourceData, meta inter
 	userName := d.Get("username").(string)
 
 	resp, err := client.UserGet(ctx, userName)
-	
+
 	if err != nil {
 		return diag.FromErr(err)
 	}

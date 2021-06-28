@@ -12,17 +12,17 @@ provider "etcd" {
 }
 
 resource "key_value_resource" "edu" {
-  key = "Nosa"
-  value = "Male"
+  key = "Passbase"
+  value = "Awesome"
   provider = etcd
     
 }
 
-# resource "user_resource" "user"{
-#   username = "Nosa5"
-#   password = "123456"
-#   provider = etcd
-# }
+resource "user_resource" "user"{
+  username = "passbase"
+  password = "admin22@@1"
+  provider = etcd
+}
 
 resource "role_resource" "role" {
   name = "Security Engineer"
@@ -58,9 +58,9 @@ data "cluster_data_source" "edu" {
    provider = etcd
 }
 
-# output "user" {
-#   value = user_resource.user
-# }
+output "user" {
+  value = user_resource.user
+}
 
 output "key" {
   value = key_value_resource.edu
