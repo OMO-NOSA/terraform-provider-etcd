@@ -20,30 +20,30 @@ resource "key_value_resource" "edu" {
 
 resource "user_resource" "user"{
   username = "Passbase"
-  password = "admin22@@1"
+  password = var.user_password
   provider = etcd
 }
 
 resource "role_resource" "role" {
-  name = "Security Engineer"
+  name = "developer"
   provider = etcd
 
 }
 
 resource "grant_role_permission" "perm" {
-  role_name = "Security Engineer"
+  role_name = "developer"
   key = "checking"
-  permission = "READ"
+  permission = "WRITE"
   range = "test"
   provider = etcd
 
 }
 
-resource "grant_user_role_resource" "gmt" {
-  role_name = "security engineer"
-  username = "passbase"
-  provider = etcd
-}
+# resource "grant_user_role_resource" "gmt" {
+#   role_name = "developer"
+#   username = "passbase"
+#   provider = etcd
+# }
 
 data "users_data_source" "edu" {
   provider = etcd
@@ -56,36 +56,4 @@ data "key_value_data_source" "edu" {
  
 data "cluster_data_source" "edu" {
    provider = etcd
-}
-
-output "user" {
-  value = user_resource.user
-}
-
-output "key" {
-  value = key_value_resource.edu
-}
-
-output "user_data" {
-  value = data.users_data_source.edu
-}
-
-output "role" {
-  value = role_resource.role
-}
-
-output "val" {
-  value = data.key_value_data_source.edu
-}
-
-output "role_perms" {
-  value = grant_role_permission.perm
-}
-
-output "cluster_data" {
-  value = data.cluster_data_source.edu
-}
-
-output "users_role" {
-  value = grant_user_role_resource.gmt
 }
