@@ -37,6 +37,8 @@ func RoleResourceCreate(ctx context.Context, d *schema.ResourceData, meta interf
 
 	roleName := d.Get("name").(string)
 
+	roleName = strings.ToLower(roleName)
+
 	_, err := client.RoleAdd(ctx, roleName)
 	if err != nil {
 		diag.FromErr(err)
@@ -50,6 +52,7 @@ func RoleResourceRead(ctx context.Context, d *schema.ResourceData, meta interfac
 	client := meta.(*apiClient)
 
 	roleName := d.Get("name").(string)
+	roleName = strings.ToLower(roleName)
 
 	_, err := client.RoleGet(ctx, roleName)
 	if err != nil {
@@ -65,6 +68,8 @@ func RoleResourceDelete(ctx context.Context, d *schema.ResourceData, meta interf
 	client := meta.(*apiClient)
 
 	roleName := d.Get("name").(string)
+
+	roleName = strings.ToLower(roleName)
 
 	_, err := client.RoleDelete(ctx, roleName)
 	if err != nil {
@@ -106,6 +111,10 @@ func GrantUserRole(ctx context.Context, d *schema.ResourceData, meta interface{}
 
 	roleName := d.Get("role_name").(string)
 	userName := d.Get("username").(string)
+
+	userName = strings.ToLower(userName)
+	roleName = strings.ToLower(roleName)
+
 	_, err := client.UserGrantRole(ctx, userName, roleName)
 	if err != nil {
 		return diag.FromErr(err)

@@ -19,7 +19,7 @@ resource "key_value_resource" "edu" {
 }
 
 resource "user_resource" "user"{
-  username = "passbase"
+  username = "Passbase"
   password = "admin22@@1"
   provider = etcd
 }
@@ -40,8 +40,8 @@ resource "grant_role_permission" "perm" {
 }
 
 resource "grant_user_role_resource" "gmt" {
-  role_name = "Security Engineer"
-  username = "Mario"
+  role_name = "security engineer"
+  username = "passbase"
   provider = etcd
 }
 
