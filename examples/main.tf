@@ -39,11 +39,16 @@ resource "grant_role_permission" "perm" {
 
 }
 
-# resource "grant_user_role_resource" "gmt" {
-#   role_name = "developer"
-#   username = "passbase"
-#   provider = etcd
-# }
+resource "grant_user_role_resource" "gmt" {
+  role_name = "developer"
+  username = "passbase"
+  provider = etcd
+  
+  depends_on = [
+    user_resource.user,
+    role_resource.role,
+  ]
+}
 
 data "users_data_source" "edu" {
   provider = etcd

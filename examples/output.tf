@@ -27,6 +27,6 @@ output "cluster_data" {
   value = data.cluster_data_source.edu
 }
 
-# output "users_role" {
-#   value = grant_user_role_resource.gmt
-# }
+output "users_role" {
+  value = grant_user_role_resource.gmt
+}

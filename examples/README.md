@@ -13,6 +13,10 @@ Install the Plugins
 ```bash
 Terraform init
 ```
+Planning Infrastructure
+```bash
+Terraform plan
+```
 
 Apply configuration from main.tf.
 ```bash
