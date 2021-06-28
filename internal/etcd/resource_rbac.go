@@ -3,6 +3,7 @@ package etcd
 import (
 	"context"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -137,6 +138,9 @@ func RevokeUserRole(ctx context.Context, d *schema.ResourceData, meta interface{
 
 	roleName := d.Get("role_name").(string)
 	userName := d.Get("username").(string)
+	userName = strings.ToLower(userName)
+	roleName = strings.ToLower(roleName)
+
 	_, err := client.UserRevokeRole(ctx, userName, roleName)
 	if err != nil {
 		return diag.FromErr(err)
@@ -184,6 +188,8 @@ func GrantRolePermission(ctx context.Context, d *schema.ResourceData, meta inter
 	key := d.Get("key").(string)
 	permission := d.Get("permission").(string)
 
+	roleName = strings.ToLower(roleName)
+
 	perm, err := clientv3.StrToPermissionType(permission)
 	if err != nil {
 		return diag.FromErr(err)
@@ -210,6 +216,8 @@ func RevokeRolePermission(ctx context.Context, d *schema.ResourceData, meta inte
 	rangeEnd := d.Get("range").(string)
 	roleName := d.Get("role_name").(string)
 	key := d.Get("key").(string)
+
+	roleName = strings.ToLower(roleName)
 
 	_, err := client.RoleRevokePermission(ctx, roleName, key, rangeEnd)
 

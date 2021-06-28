@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -52,6 +53,7 @@ func AuthResourceCreateUser(ctx context.Context, d *schema.ResourceData, meta in
 
 	userName := d.Get("username").(string)
 	passWord := d.Get("password").(string)
+	userName = strings.ToLower(userName)
 
 	if (passWord == "" || len(passWord) < 9) {
 		errmsg := errors.New("Validate Password Strength")
@@ -72,6 +74,7 @@ func AuthResourceDeleteUser(ctx context.Context, d *schema.ResourceData, meta in
 	client := meta.(*apiClient)
 
 	userName := d.Get("username").(string)
+	userName = strings.ToLower(userName)
 
 	_, err := client.UserDelete(ctx, userName)
 	if err != nil {
@@ -86,7 +89,8 @@ func AuthResourceUpdateUser(ctx context.Context, d *schema.ResourceData, meta in
 
 	userName := d.Get("username").(string)
 	passWord := d.Get("password").(string)
-
+	userName = strings.ToLower(userName)
+	
 	if (passWord == "" || len(passWord) < 9) {
 		errmsg := errors.New("Validate Password Strength")
 		return diag.FromErr(errmsg)
@@ -105,6 +109,7 @@ func AuthResourceGetUser(ctx context.Context, d *schema.ResourceData, meta inter
 	client := meta.(*apiClient)
 
 	userName := d.Get("username").(string)
+	userName = strings.ToLower(userName)
 
 	resp, err := client.UserGet(ctx, userName)
 
