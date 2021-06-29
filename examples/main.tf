@@ -18,7 +18,7 @@ resource "etcd_key_value" "edu" {
 }
 
 resource "etcd_user" "user"{
-  username = "Passbase"
+  username = "passbase"
   password = var.user_password
   
 }
@@ -31,7 +31,7 @@ resource "etcd_role" "role" {
 
 resource "etcd_grant_role_permission" "perm" {
   role_name = "developer"
-  key = etcd_key_value.key
+  key = etcd_key_value.edu.key
   permission = "WRITE"
   range = "test"
   
@@ -39,7 +39,7 @@ resource "etcd_grant_role_permission" "perm" {
 
 resource "etcd_grant_user_role" "gmt" {
   role_name = etcd_role.role.name
-  username = etcd_users.user.username
+  username = etcd_user.user.username
 }
 
 data "etcd_users" "edu" {}
