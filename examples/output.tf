@@ -1,32 +1,32 @@
 output "user" {
-  value = user_resource.user
+  value = etcd_user.user
   sensitive = true
 }
 
 output "key" {
-  value = key_value_resource.edu
+  value = etcd_key_value.edu
 }
 
 output "user_data" {
-  value = data.users_data_source.edu
+  value = data.etcd_users.edu
 }
 
 output "role" {
-  value = role_resource.role
+  value = etcd_role.role
 }
 
 output "val" {
-  value = data.key_value_data_source.edu
+  value = data.etcd_key_value.edu
 }
 
 output "role_perms" {
-  value = grant_role_permission.perm
+  value = etcd_grant_role_permission.perm
 }
 
 output "cluster_data" {
-  value = data.cluster_data_source.edu
+  value = data.etcd_cluster.edu
 }
 
 output "users_role" {
-  value = grant_user_role_resource.gmt
+  value = etcd_grant_user_role.gmt
 }

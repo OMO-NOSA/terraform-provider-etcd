@@ -51,19 +51,19 @@ func New() *schema.Provider {
 				DefaultFunc: schema.EnvDefaultFunc("isAuthEnabled", true),
 			},
 		},
-		
+
 		ResourcesMap: map[string]*schema.Resource{
-			"key_value_resource":       KvResource(),
-			"role_resource":            RoleResource(),
-			"user_resource":            AuthResource(),
-			"grant_user_role_resource": RoleGrantResource(),
-			"grant_role_permission":    RolePermissionResource(),
+			"etcd_key_value":             KvResource(),
+			"etcd_role":                  RoleResource(),
+			"etcd_user":                  AuthResource(),
+			"etcd_grant_user_role":       RoleGrantResource(),
+			"etcd_grant_role_permission": RolePermissionResource(),
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
-			"cluster_data_source": ClusterDataSource(),
-			"users_data_source":   UsersDataSource(),
-			"key_value_data_source": KeyValueDataSource(),
+			"etcd_cluster":   ClusterDataSource(),
+			"etcd_users":     UsersDataSource(),
+			"etcd_key_value": KeyValueDataSource(),
 		},
 	}
 

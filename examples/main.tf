@@ -11,54 +11,41 @@ provider "etcd" {
   endpoints = [ "localhost:2379" ]
 }
 
-resource "key_value_resource" "edu" {
+resource "etcd_key_value" "edu" {
   key = "Passbase"
   value = "Awesome"
-  provider = etcd
-    
+  
 }
 
-resource "user_resource" "user"{
+resource "etcd_user" "user"{
   username = "Passbase"
   password = var.user_password
-  provider = etcd
+  
 }
 
-resource "role_resource" "role" {
+resource "etcd_role" "role" {
   name = "developer"
-  provider = etcd
+  
 
 }
 
-resource "grant_role_permission" "perm" {
+resource "etcd_grant_role_permission" "perm" {
   role_name = "developer"
-  key = "checking"
+  key = etcd_key_value.key
   permission = "WRITE"
   range = "test"
-  provider = etcd
-
-}
-
-resource "grant_user_role_resource" "gmt" {
-  role_name = "developer"
-  username = "passbase"
-  provider = etcd
   
-  depends_on = [
-    user_resource.user,
-    role_resource.role,
-  ]
 }
 
-data "users_data_source" "edu" {
-  provider = etcd
+resource "etcd_grant_user_role" "gmt" {
+  role_name = etcd_role.role.name
+  username = etcd_users.user.username
 }
 
-data "key_value_data_source" "edu" {
-   provider = etcd
+data "etcd_users" "edu" {}
+
+data "etcd_key_value" "edu" {
    key = "Nosa" 
 }
  
-data "cluster_data_source" "edu" {
-   provider = etcd
-}
+data "etcd_cluster" "edu" {}
