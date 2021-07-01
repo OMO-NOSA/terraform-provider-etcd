@@ -1,10 +1,9 @@
 package etcd
 
+
 import (
 	"context"
-	"errors"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -16,114 +15,66 @@ func AuthResource() *schema.Resource {
 		// This description is used by the documentation generator and the language server.
 		Description: "",
 
-		CreateContext: AuthResourceCreateUser,
-		ReadContext:   AuthResourceGetUser,
-		UpdateContext: AuthResourceUpdateUser,
-		DeleteContext: AuthResourceDeleteUser,
+		CreateContext: AuthenticateUserResource,
+		ReadContext:   AuthenticateUserReadResource,
+		UpdateContext: nil,
+		DeleteContext: AuthenticateUserDeleteResource,
 
 		Schema: map[string]*schema.Schema{
-			"id": &schema.Schema{
-				Type:     schema.TypeString,
+			"auth_status": &schema.Schema{
+				Type:     schema.TypeBool,
 				Computed: true,
 			},
-			"username": &schema.Schema{
-				Type:     schema.TypeString,
+			"is_auth_enabled": &schema.Schema{
+				Type:     schema.TypeBool,
 				Required: true,
-			},
-			"password": &schema.Schema{
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"roles": &schema.Schema{
-				Type:     schema.TypeList,
-				Computed: true,
-				Elem:     &schema.Schema{Type: schema.TypeString},
-			},
-
-			"last_updated": &schema.Schema{
-				Type:     schema.TypeString,
-				Computed: true,
-			},
+				ForceNew: true,
+		},
 		},
 	}
 }
 
-func AuthResourceCreateUser(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func AuthenticateUserResource(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*apiClient)
 
-	userName := d.Get("username").(string)
-	passWord := d.Get("password").(string)
-	userName = strings.ToLower(userName)
+	isAuthEnabled := d.Get("is_auth_enabled").(bool)
 
-	if (passWord == "" || len(passWord) < 9) {
-		errmsg := errors.New("Validate Password Strength")
-		return diag.FromErr(errmsg)
+	if !isAuthEnabled {
+		client.AuthDisable(ctx)
+		d.Set("auth_status", false)
+		status, err := client.AuthStatus(ctx)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+		d.Set("auth_status", status.Enabled)
+		d.SetId(strconv.FormatInt(time.Now().Unix(), 10))
+		return nil
 	}
 
-	_, err := client.UserAdd(ctx, userName, passWord)
+	_, err := client.AuthEnable(ctx)
+
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	d.Set("username", userName)
 
+	status, err := client.AuthStatus(ctx)
+
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	d.Set("auth_status", status.Enabled)
 	d.SetId(strconv.FormatInt(time.Now().Unix(), 10))
 	return nil
 }
 
-func AuthResourceDeleteUser(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	client := meta.(*apiClient)
+func AuthenticateUserReadResource(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	status :=  d.Get("auth_status")
+	d.Set("auth_status", status)
+	return nil 
+}
 
-	userName := d.Get("username").(string)
-	userName = strings.ToLower(userName)
-
-	_, err := client.UserDelete(ctx, userName)
-	if err != nil {
-		return diag.FromErr(err)
-	}
+func AuthenticateUserDeleteResource(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	d.SetId("")
-	return nil
-}
-
-func AuthResourceUpdateUser(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	client := meta.(*apiClient)
-
-	userName := d.Get("username").(string)
-	passWord := d.Get("password").(string)
-	userName = strings.ToLower(userName)
-	
-	if (passWord == "" || len(passWord) < 9) {
-		errmsg := errors.New("Validate Password Strength")
-		return diag.FromErr(errmsg)
-	}
-
-	_, err := client.UserChangePassword(ctx, userName, passWord)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	d.Set("last_updated", time.Now().Format(time.RFC850))
-	d.SetId(strconv.FormatInt(time.Now().Unix(), 10))
-	return nil
-}
-
-func AuthResourceGetUser(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	client := meta.(*apiClient)
-
-	userName := d.Get("username").(string)
-	userName = strings.ToLower(userName)
-
-	resp, err := client.UserGet(ctx, userName)
-
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	roles := []string{}
-
-	for _, role := range resp.Roles {
-		roles = append(roles, role)
-	}
-	if err := d.Set("roles", roles); err != nil {
-		return diag.FromErr(err)
-	}
-
-	return nil
+	return nil 
 }

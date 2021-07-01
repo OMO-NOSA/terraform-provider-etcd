@@ -30,3 +30,7 @@ output "cluster_data" {
 output "users_role" {
   value = etcd_grant_user_role.gmt
 }
+
+output "auth" {
+  value = etcd_auth.auth
+}

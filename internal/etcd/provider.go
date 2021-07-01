@@ -35,29 +35,28 @@ func New() *schema.Provider {
 				//DefaultFunc: schema.EnvDefaultFunc("ENDPOINTS", []string{"localhost:2379"}),
 				Elem: &schema.Schema{Type: schema.TypeString},
 			},
+			
 			"username": &schema.Schema{
 				Type:        schema.TypeString,
 				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("username", "root"),
+				DefaultFunc: schema.EnvDefaultFunc("username", ""),
 			},
 			"password": &schema.Schema{
 				Type:        schema.TypeString,
 				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("password", "root"),
+				DefaultFunc: schema.EnvDefaultFunc("password", ""),
+				
 			},
-			"is_auth_enabled": &schema.Schema{
-				Type:        schema.TypeBool,
-				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("isAuthEnabled", true),
-			},
+		
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
 			"etcd_key_value":             KvResource(),
 			"etcd_role":                  RoleResource(),
-			"etcd_user":                  AuthResource(),
+			"etcd_user":                  UserResource(),
 			"etcd_grant_user_role":       RoleGrantResource(),
 			"etcd_grant_role_permission": RolePermissionResource(),
+			"etcd_auth": AuthResource(),
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
@@ -79,7 +78,6 @@ type apiClient struct {
 
 func configure(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	var (
-		diags diag.Diagnostics
 		err   error
 		cli   *etcd.Client
 	)
@@ -96,36 +94,20 @@ func configure(ctx context.Context, d *schema.ResourceData) (interface{}, diag.D
 	} else {
 		urls = append(urls, endpoints...)
 	}
-
 	username := d.Get("username").(string)
 	password := d.Get("password").(string)
-	isAuthEnabled := d.Get("is_auth_enabled").(bool)
-
-	if !isAuthEnabled {
-		cli, err = etcd.New(etcd.Config{
-			Endpoints:   urls,
-			DialTimeout: 5 * time.Second,
-		})
-
-	} else {
-		cli, err = etcd.New(etcd.Config{
-			Endpoints:   urls,
-			DialTimeout: 5 * time.Second,
-			Username:    username,
-			Password:    password,
-		})
-	}
+	
+	cli, err = etcd.New(etcd.Config{
+		Endpoints:   urls,
+		DialTimeout: 5 * time.Second,
+		RejectOldCluster: false,
+		Username : username,
+		Password: password,
+	})
 
 	if err != nil {
-		diags = append(diags, diag.Diagnostic{
-			Severity: diag.Error,
-			Summary:  "invalid credentials",
-			Detail:   "error when authenticating user",
-		})
-		return nil, diags
+		return nil, diag.FromErr(err)
 	}
 
-	//defer cli.Close()
-
-	return &apiClient{cli}, nil
+	return &apiClient{cli}, nil 
 }
