@@ -1,10 +1,9 @@
 package etcd
 
-
 import (
 	"context"
-	"strconv"
-	"time"
+	//"strconv"
+	//"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -25,11 +24,11 @@ func AuthResource() *schema.Resource {
 				Type:     schema.TypeBool,
 				Computed: true,
 			},
-			"is_auth_enabled": &schema.Schema{
+			"enabled": &schema.Schema{
 				Type:     schema.TypeBool,
 				Required: true,
 				ForceNew: true,
-		},
+			},
 		},
 	}
 }
@@ -37,7 +36,7 @@ func AuthResource() *schema.Resource {
 func AuthenticateUserResource(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*apiClient)
 
-	isAuthEnabled := d.Get("is_auth_enabled").(bool)
+	isAuthEnabled := d.Get("enabled").(bool)
 
 	if !isAuthEnabled {
 		client.AuthDisable(ctx)
@@ -47,7 +46,7 @@ func AuthenticateUserResource(ctx context.Context, d *schema.ResourceData, meta 
 			return diag.FromErr(err)
 		}
 		d.Set("auth_status", status.Enabled)
-		d.SetId(strconv.FormatInt(time.Now().Unix(), 10))
+		d.SetId("authentication_setting")
 		return nil
 	}
 
@@ -64,17 +63,18 @@ func AuthenticateUserResource(ctx context.Context, d *schema.ResourceData, meta 
 	}
 
 	d.Set("auth_status", status.Enabled)
-	d.SetId(strconv.FormatInt(time.Now().Unix(), 10))
+	//d.SetId(strconv.FormatInt(time.Now().Unix(), 10))
+	d.SetId("authentication_setting")
 	return nil
 }
 
 func AuthenticateUserReadResource(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	status :=  d.Get("auth_status")
+	status := d.Get("auth_status")
 	d.Set("auth_status", status)
-	return nil 
+	return nil
 }
 
 func AuthenticateUserDeleteResource(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	d.SetId("")
-	return nil 
+	return nil
 }

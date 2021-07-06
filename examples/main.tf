@@ -15,7 +15,7 @@ provider "etcd" {
 }
 
 resource "etcd_auth" "auth" {
-  is_auth_enabled = true
+  enabled = false
 }
 
 resource "etcd_key_value" "edu" {

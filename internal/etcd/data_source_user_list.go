@@ -2,8 +2,8 @@ package etcd
 
 import (
 	"context"
-	"strconv"
-	"time"
+	//"strconv"
+	//"time"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -26,17 +26,16 @@ func usersDataSourceRead(ctx context.Context, d *schema.ResourceData, meta inter
 	// use the meta value to retrieve your client from the provider configure method
 	client := meta.(*apiClient)
 
-
 	users, err := client.UserList(ctx)
 
 	if err != nil {
 		return diag.FromErr(err)
 	}
 	if err := d.Set("users", users.Users); err != nil {
-		
+
 		return diag.FromErr(err)
 	}
 
-	d.SetId(strconv.FormatInt(time.Now().Unix(), 10))
+	d.SetId("users_list")
 	return nil
 }

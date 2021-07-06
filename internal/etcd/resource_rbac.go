@@ -2,9 +2,9 @@ package etcd
 
 import (
 	"context"
-	"strconv"
+	//"strconv"
 	"strings"
-	"time"
+	//"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -44,7 +44,8 @@ func RoleResourceCreate(ctx context.Context, d *schema.ResourceData, meta interf
 		diag.FromErr(err)
 	}
 	d.Set("name", roleName)
-	d.SetId(strconv.FormatInt(time.Now().Unix(), 10))
+	d.SetId(roleName)
+	//d.SetId(strconv.FormatInt(time.Now().Unix(), 10))
 	return nil
 }
 
@@ -119,7 +120,8 @@ func GrantUserRole(ctx context.Context, d *schema.ResourceData, meta interface{}
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	d.SetId(strconv.FormatInt(time.Now().Unix(), 10))
+	//d.SetId(strconv.FormatInt(time.Now().Unix(), 10))
+	d.SetId(roleName)
 	return nil
 
 }
@@ -211,7 +213,8 @@ func GrantRolePermission(ctx context.Context, d *schema.ResourceData, meta inter
 	if err != nil {
 		diag.FromErr(err)
 	}
-	d.SetId(strconv.FormatInt(time.Now().Unix(), 10))
+	//d.SetId(strconv.FormatInt(time.Now().Unix(), 10))
+	d.SetId(roleName)
 	d.Set("role_name", roleName)
 	d.Set("key", key)
 	d.Set("range", rangePrefix)

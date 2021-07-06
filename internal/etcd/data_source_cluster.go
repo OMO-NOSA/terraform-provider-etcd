@@ -2,8 +2,8 @@ package etcd
 
 import (
 	"context"
-	"time"
-	"strconv"
+	// "time"
+	// "strconv"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -67,7 +67,8 @@ func clusterDataSourceRead(ctx context.Context, d *schema.ResourceData, meta int
 		return diag.FromErr(err)
 
 	}
-	d.SetId(strconv.FormatInt(time.Now().Unix(), 10))
+	//d.SetId(strconv.FormatInt(time.Now().Unix(), 10))
+	d.SetId("cluster_data")
 	
 	return nil
 }

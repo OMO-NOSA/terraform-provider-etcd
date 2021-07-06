@@ -39,12 +39,12 @@ func New() *schema.Provider {
 			"username": &schema.Schema{
 				Type:        schema.TypeString,
 				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("username", ""),
+				DefaultFunc: schema.EnvDefaultFunc("ETCD_USERNAME", ""),
 			},
 			"password": &schema.Schema{
 				Type:        schema.TypeString,
 				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("password", ""),
+				DefaultFunc: schema.EnvDefaultFunc("ETCD_PASSWORD", ""),
 				
 			},
 		

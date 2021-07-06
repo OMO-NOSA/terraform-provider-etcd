@@ -3,7 +3,8 @@ package etcd
 import (
 	"context"
 	"errors"
-	"strconv"
+
+	//"strconv"
 	"strings"
 	"time"
 
@@ -55,7 +56,7 @@ func UserResourceCreateUser(ctx context.Context, d *schema.ResourceData, meta in
 	passWord := d.Get("password").(string)
 	userName = strings.ToLower(userName)
 
-	if (passWord == "" || len(passWord) < 9) {
+	if passWord == "" || len(passWord) < 9 {
 		errmsg := errors.New("Validate Password Strength")
 		return diag.FromErr(errmsg)
 	}
@@ -66,7 +67,8 @@ func UserResourceCreateUser(ctx context.Context, d *schema.ResourceData, meta in
 	}
 	d.Set("username", userName)
 
-	d.SetId(strconv.FormatInt(time.Now().Unix(), 10))
+	d.SetId(userName)
+	//d.SetId(strconv.FormatInt(time.Now().Unix(), 10))
 	return nil
 }
 
@@ -90,8 +92,8 @@ func UserResourceUpdateUser(ctx context.Context, d *schema.ResourceData, meta in
 	userName := d.Get("username").(string)
 	passWord := d.Get("password").(string)
 	userName = strings.ToLower(userName)
-	
-	if (passWord == "" || len(passWord) < 9) {
+
+	if passWord == "" || len(passWord) < 9 {
 		errmsg := errors.New("Validate Password Strength")
 		return diag.FromErr(errmsg)
 	}
@@ -101,7 +103,8 @@ func UserResourceUpdateUser(ctx context.Context, d *schema.ResourceData, meta in
 		return diag.FromErr(err)
 	}
 	d.Set("last_updated", time.Now().Format(time.RFC850))
-	d.SetId(strconv.FormatInt(time.Now().Unix(), 10))
+	//d.SetId(strconv.FormatInt(time.Now().Unix(), 10))
+	d.SetId("userName")
 	return nil
 }
 
@@ -119,7 +122,7 @@ func UserResourceGetUser(ctx context.Context, d *schema.ResourceData, meta inter
 	roles := []string{}
 
 	roles = append(roles, resp.Roles...)
-	
+
 	if err := d.Set("roles", roles); err != nil {
 		return diag.FromErr(err)
 	}

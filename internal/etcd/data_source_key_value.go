@@ -3,8 +3,8 @@ package etcd
 import (
 	"context"
 	"errors"
-	"time"
-	"strconv"
+	// "time"
+	// "strconv"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -62,7 +62,8 @@ func keyValueDataSourceRead(ctx context.Context, d *schema.ResourceData, meta in
 
 	}
 
-	d.SetId(strconv.FormatInt(time.Now().Unix(), 10))
+	//d.SetId(strconv.FormatInt(time.Now().Unix(), 10))
+	d.SetId(key)
 
 	return nil
 }
