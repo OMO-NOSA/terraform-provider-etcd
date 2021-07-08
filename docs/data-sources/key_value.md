@@ -1,5 +1,5 @@
 ---
-page_title: "etcd_data_source Data Source - terraform-provider-etcd"
+page_title: "etcd_key_value_data_source Data Source - terraform-provider-etcd"
 subcategory: ""
 description: |-
   Sample data source in the Terraform provider etcd.
@@ -13,19 +13,10 @@ Sample data source in the Terraform provider scaffolding.
 
 ```terraform
 
-data "etcd_users" "edu" {
-  depends_on = [
-    etcd_user.user,
-  ]
-}
-
 data "etcd_key_value" "edu" {
    key = "Nosa"
 }
  
-data "etcd_cluster" "edu" {
-  
-}
 ```
 
 ## Schema
@@ -36,6 +27,5 @@ data "etcd_cluster" "edu" {
 
 ### Optional
 
-- **id** (String, Optional) The ID of this resource.
 
 

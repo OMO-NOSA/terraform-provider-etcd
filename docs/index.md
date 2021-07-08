@@ -1,20 +1,41 @@
 ---
-page_title: "scaffolding Provider"
+page_title: "Etcd Provider"
 subcategory: ""
 description: |-
   
 ---
 
-# scaffolding Provider
+# etcd Provider
 
 
 
 ## Example Usage
 
 ```terraform
-provider "scaffolding" {
-  # example configuration here
+terraform {
+  required_providers {
+    etcd = {
+      version = "0.1"
+      source  = "hashicorp.com/passbase/etcd"
+    }
+  }
 }
+
+
+provider "etcd" {
+  endpoints = [ "localhost:2379" ]
+  username = "root"
+  password = "root"
+  
+}
+
 ```
 
 ## Schema
+
+
+### Arguments Reference
+
+- **username** (String, Required) The root username.
+- **password** (String, Required) The root user password.
+- **endpoints** (String, Required) Cluster endpoint.
