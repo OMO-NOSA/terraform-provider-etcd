@@ -29,6 +29,12 @@ provider "etcd" {
   
 }
 
+resource "etcd_user" "user"{
+  username = "passbase"
+  password = "password"
+ 
+}
+
 ```
 
 ## Schema

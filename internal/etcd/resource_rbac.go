@@ -15,7 +15,7 @@ import (
 func RoleResource() *schema.Resource {
 	return &schema.Resource{
 		// This description is used by the documentation generator and the language server.
-		Description: "",
+		Description: "Handles Role creation and manages roles lifecycle",
 
 		CreateContext: RoleResourceCreate,
 		ReadContext:   RoleResourceRead,
