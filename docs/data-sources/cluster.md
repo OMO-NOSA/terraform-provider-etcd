@@ -5,7 +5,7 @@ description: |-
   Sample data source in the Terraform provider etcd.
 ---
 
-# Data Source `cluster_data_source`
+# Data Source `etcd_cluster data_source`
 
 Sample data source in the Terraform provider scaffolding.
 
@@ -13,7 +13,7 @@ Sample data source in the Terraform provider scaffolding.
 
 ```terraform
  
-data "etcd_cluster" "edu" {
+data "etcd_cluster" "cluster" {
   
 }
 ```

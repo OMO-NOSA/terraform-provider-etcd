@@ -5,9 +5,9 @@ description: |-
   Sample resource in the Terraform provider etcd.
 ---
 
-# Resource `etcd_resource`
+# Resource `etcd_user resource`
 
-Sample resource in the Terraform provider scaffolding.
+The user resource creates a user on the etcd cluster.
 
 ## Example Usage
 

@@ -5,7 +5,7 @@ description: |-
   Sample data source in the Terraform provider etcd.
 ---
 
-# Data Source `etcd_data_source`
+# Data Source `etcd_users data_source`
 
 Sample data source in the Terraform provider scaffolding.
 

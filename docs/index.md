@@ -15,7 +15,7 @@ description: |-
 terraform {
   required_providers {
     etcd = {
-      version = "0.1"
+      version = "1.0"
       source  = "hashicorp.com/passbase/etcd"
     }
   }

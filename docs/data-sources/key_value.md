@@ -5,7 +5,7 @@ description: |-
   Sample data source in the Terraform provider etcd.
 ---
 
-# Data Source `etcd_data_source`
+# Data Source `etcd_key_value data_source`
 
 Sample data source in the Terraform provider scaffolding.
 
@@ -13,7 +13,7 @@ Sample data source in the Terraform provider scaffolding.
 
 ```terraform
 
-data "etcd_key_value" "edu" {
+data "etcd_key_value" "key" {
    key = "Nosa"
 }
  

@@ -5,7 +5,7 @@ description: |-
   Sample resource in the Terraform provider etcd.
 ---
 
-# Resource `etcd_resource`
+# Resource `etcd_role resource`
 
 Sample resource in the Terraform provider scaffolding.
 

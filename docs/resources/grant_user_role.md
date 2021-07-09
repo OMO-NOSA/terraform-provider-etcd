@@ -5,11 +5,11 @@ description: |-
   This resource grants a predefined role to a user.
 ---
 
-# Resource `etcd_resource`
+# Resource `etcd_grant_user_role resource`
 
 The grant_user_role resource grants a predefined role to the user, it takes as argument;
 
-- role
+- role_name
 - username
 
 ## Example Usage

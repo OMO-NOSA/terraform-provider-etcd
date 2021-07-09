@@ -5,7 +5,7 @@ description: |-
   This resource grants some set of permissions to an existing role with the etcd cluster
 ---
 
-# Resource `grant_role_permission`
+# Resource `etcd_grant_role_permission resource`
 
 grant_role_permission resource in the Terraform Etcd Provider.
 

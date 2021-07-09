@@ -5,7 +5,7 @@ description: |-
   resource to set a key/value pair on the Etcd Cluster
 ---
 
-# Resource `key_value resource`
+# Resource `etcd_key_value resource`
 
 resource to set a key/value pair on the Etcd Cluster
 
