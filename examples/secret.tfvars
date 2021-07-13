@@ -1,1 +1,1 @@
-user_password = "admin22@@1"
+user_password = "admin5522@@1"
