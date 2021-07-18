@@ -3,8 +3,8 @@
 - Website: https://www.terraform.io
 - [![Gitter chat](https://badges.gitter.im/hashicorp-terraform/Lobby.png)](https://gitter.im/hashicorp-terraform/Lobby)
 
-- [![Build Action Status](https://github.com/passbase/terraform-provider-etcd/actions/workflows/Tests/badge.svg)](https://github.com/passbase/terraform-provider-etcd/actions)
-- [![Release Action Status](https://github.com/passbase/terraform-provider-etcd/actions/workflows/release/badge.svg)](https://github.com/passbase/terraform-provider-etcd/actions)
+- ![Build Action Status](https://github.com/passbase/terraform-provider-etcd/actions/workflows/test.yml/badge.svg)
+- ![Release Action Status](https://github.com/passbase/terraform-provider-etcd/actions/workflows/release.yml/badge.svg)
 
 
 This repository contains Etcd [Terraform](https://www.terraform.io) provider for our internal tooling. It contains:
