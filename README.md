@@ -1,5 +1,12 @@
 # Terraform Provider Etcd
 
+- Website: https://www.terraform.io
+- [![Gitter chat](https://badges.gitter.im/hashicorp-terraform/Lobby.png)](https://gitter.im/hashicorp-terraform/Lobby)
+
+- [![Build Action Status](https://github.com/passbase/terraform-provider-etcd/actions/workflows/Tests/badge.svg)](https://github.com/passbase/terraform-provider-etcd/actions)
+- [![Release Action Status](https://github.com/passbase/terraform-provider-etcd/actions/workflows/release/badge.svg)](https://github.com/passbase/terraform-provider-etcd/actions)
+
+
 This repository contains Etcd [Terraform](https://www.terraform.io) provider for our internal tooling. It contains:
 
  - A resource, and a data source (`internal/provider/`),
